@@ -226,7 +226,15 @@ module Bundler
       # rubygems plugins sometimes hook into the gem install process
       Gem.load_env_plugins if Gem.respond_to?(:load_env_plugins)
 
-      definition = Bundler.definition
+      auto_update_gems = []
+      Bundler.definition.dependencies.each do |dependency|
+        if dependency.auto_update && !Bundler.settings[:frozen]
+          auto_update_gems << dependency.name
+        end
+      end
+      opts = opts.merge(:update => true) if auto_update_gems.size > 0
+
+      definition = Bundler.definition(:gems => auto_update_gems)
       definition.validate_ruby!
       Installer.install(Bundler.root, definition, opts)
       Bundler.load.cache if Bundler.root.join("vendor/cache").exist? && !options["no-cache"]

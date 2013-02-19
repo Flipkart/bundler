@@ -5,6 +5,7 @@ require 'bundler/rubygems_ext'
 module Bundler
   class Dependency < Gem::Dependency
     attr_reader :autorequire
+    attr_reader :auto_update
     attr_reader :groups
     attr_reader :platforms
 
@@ -32,6 +33,7 @@ module Bundler
       @source      = options["source"]
       @platforms   = Array(options["platforms"])
       @env         = options["env"]
+      @auto_update = options['auto_update']
 
       if options.key?('require')
         @autorequire = Array(options['require'] || [])
