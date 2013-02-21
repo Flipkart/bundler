@@ -157,7 +157,13 @@ module Bundler
           found.reject! { |spec| spec.version.prerelease? }
         end
 
-        found.sort_by {|s| [s.version, s.platform.to_s == 'ruby' ? "\0" : s.platform.to_s] }
+        sorted_results = found.sort_by {|s| [s.version, s.platform.to_s == 'ruby' ? "\0" : s.platform.to_s] }
+
+        if dependency.respond_to?(:auto_update) && dependency.auto_update
+          [sorted_results.last].compact
+        else
+          sorted_results
+        end
       end
     end
 
